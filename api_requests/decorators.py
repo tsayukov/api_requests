@@ -5,7 +5,9 @@ from fractions import Fraction
 from typing import Any, Callable, Concatenate, Final
 
 from api_requests.details._api_method import ApiMethodInterface, ApiMethodProperties
+from api_requests.details._error_handler import ErrorHandlerInterface
 from api_requests.details._http_verbs import HttpVerbs
+from api_requests.details._paginator import PaginatorInterface
 
 
 def _configure_api_client[
@@ -104,3 +106,58 @@ post: Final = _make_api_method_decorator(HttpVerbs.POST)
 put: Final = _make_api_method_decorator(HttpVerbs.PUT)
 patch: Final = _make_api_method_decorator(HttpVerbs.PATCH)
 delete: Final = _make_api_method_decorator(HttpVerbs.DELETE)
+
+
+def error_handler[
+    Cls: object, R, **P
+](
+    method: Callable[Concatenate[Cls, P], R] | None = None,
+    /,
+    *api_methods: str,
+    error_codes: int | Iterable[int] | None = None,
+) -> (
+    ErrorHandlerInterface[Cls, R, P]
+    | Callable[[Callable[Concatenate[Cls, P], R]], ErrorHandlerInterface[Cls, R, P]]
+):
+    """Mark a method as an error handler for API methods that raise errors.
+
+    Use this decorator only for methods of an API client class.
+    If 'api_methods' is present, use this error handler only for those API methods.
+    If 'error_codes' is present, use this error handler only if the API methods
+    return one of those error codes.
+    """
+
+    def wraps(method: Callable[Concatenate[Cls, P], R]):
+        return ErrorHandlerInterface(
+            error_handler=method, api_methods=api_methods, error_codes=error_codes
+        )
+
+    if method is None:
+        return wraps
+
+    return wraps(method)
+
+
+def paginator[
+    Cls: object, R, **P
+](
+    method: Callable[Concatenate[Cls, P], R] | None = None,
+    /,
+    *api_methods: str,
+) -> (
+    PaginatorInterface[Cls, R, P]
+    | Callable[[Callable[Concatenate[Cls, P], R]], PaginatorInterface[Cls, R, P]]
+):
+    """Mark a method as a paginator for API methods that return data page by page.
+
+    Use this decorator only for methods of an API client class.
+    If 'api_methods' is present, use this paginator only for those API methods.
+    """
+
+    def wraps(method: Callable[Concatenate[Cls, P], R]):
+        return PaginatorInterface(paginator=method, api_methods=api_methods)
+
+    if method is None:
+        return wraps
+
+    return wraps(method)

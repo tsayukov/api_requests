@@ -13,6 +13,8 @@ from api_requests.decorators import (
     put,
     patch,
     delete,
+    error_handler,
+    paginator,
 )
 
 
@@ -27,4 +29,6 @@ __all__ = [
     "put",
     "patch",
     "delete",
+    "error_handler",
+    "paginator",
 ]
