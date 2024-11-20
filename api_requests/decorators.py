@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from typing import Any, Callable, Concatenate, Final
 
 from api_requests.details._api_method import ApiMethodInterface, ApiMethodProperties
+from api_requests.details._common import BASE_FIELD_NAME
 from api_requests.details._configure import configure_impl
 from api_requests.details._error_handler import ErrorHandlerInterface
 from api_requests.details._http_verbs import HttpVerbs
@@ -17,10 +18,12 @@ def configure[
     suffix: str | None = None,
     /,
     *,
+    keep_alive: bool = True,
     requests_per_sec: tuple[int, int] | None = None,
     request_timeout_sec: float = 5,
     attempts_after_timeout: int = 10,
     delay_before_attempt_sec: float = 5,
+    rename_base_field: str = BASE_FIELD_NAME,
     **kwargs: Any,
 ) -> (Cls | Callable[[type[Cls]], type[Cls]]):
     """Configure a class as an API client class.
@@ -32,10 +35,12 @@ def configure[
         return configure_impl(
             cls,
             suffix=suffix,
+            keep_alive=keep_alive,
             requests_per_sec=requests_per_sec,
             request_timeout_sec=request_timeout_sec,
             attempts_after_timeout=attempts_after_timeout,
             delay_before_attempt_sec=delay_before_attempt_sec,
+            rename_base_field=rename_base_field,
             **kwargs,
         )
 
