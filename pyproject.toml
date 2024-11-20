@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "api-requests"
+version = "0.1.0"
+description = "Python library for generating API client classes"
+license = "MIT"
+authors = ["Pavel Tsayukov <p.tsayukov@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/tsayukov/api_requests"
+documentation = "https://github.com/tsayukov/api_requests#readme"
+keywords = [
+    "api",
+    "request",
+    "requests",
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
+]
+packages = [{include = "api_requests"}]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/tsayukov/api_requests/issues"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
