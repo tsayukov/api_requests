@@ -1,29 +1,13 @@
 """Decorators for generating API client classes and their methods."""
 
 from collections.abc import Iterable
-from fractions import Fraction
 from typing import Any, Callable, Concatenate, Final
 
 from api_requests.details._api_method import ApiMethodInterface, ApiMethodProperties
+from api_requests.details._configure import configure_impl
 from api_requests.details._error_handler import ErrorHandlerInterface
 from api_requests.details._http_verbs import HttpVerbs
 from api_requests.details._paginator import PaginatorInterface
-
-
-def _configure_api_client[
-    Cls: object
-](
-    cls: type[Cls],
-    /,
-    *,
-    suffix: str | None,
-    requests_per_sec: Fraction | None,
-    request_timeout_sec: float,
-    attempts_after_timeout: int,
-    delay_before_attempt_sec: float,
-    **kwargs: Any,
-) -> type[Cls]:
-    raise NotImplementedError
 
 
 def configure[
@@ -45,10 +29,10 @@ def configure[
     """
 
     def wraps(cls: type[Cls]) -> type[Cls]:
-        return _configure_api_client(
+        return configure_impl(
             cls,
             suffix=suffix,
-            requests_per_sec=Fraction(requests_per_sec[0], requests_per_sec[1]),
+            requests_per_sec=requests_per_sec,
             request_timeout_sec=request_timeout_sec,
             attempts_after_timeout=attempts_after_timeout,
             delay_before_attempt_sec=delay_before_attempt_sec,
