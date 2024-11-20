@@ -30,6 +30,10 @@ packages = [{include = "api_requests"}]
 [tool.poetry.dependencies]
 python = "^3.12"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+fastapi = {extras = ["standard"], version = "^0.115.5"}
+
 
 [build-system]
 requires = ["poetry-core"]
