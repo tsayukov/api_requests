@@ -3,12 +3,12 @@
 from collections.abc import Iterable
 from typing import Any, Callable, Concatenate, Final
 
-from api_requests.details._api_method import ApiMethodInterface, ApiMethodProperties
+from api_requests.details._api_method import ApiMethod, ApiMethodProperties
 from api_requests.details._common import BASE_FIELD_NAME
 from api_requests.details._configure import configure_impl
-from api_requests.details._error_handler import ErrorHandlerInterface
+from api_requests.details._error_handler import ErrorHandler
 from api_requests.details._http_verbs import HttpVerbs
-from api_requests.details._paginator import PaginatorInterface
+from api_requests.details._paginator import Paginator
 
 
 def configure[
@@ -61,7 +61,7 @@ def _make_api_method_decorator(http_verb: HttpVerbs):
         error_codes: int | Iterable[int] | None = None,
         pagination: bool = False,
         **kwargs: Any,
-    ) -> Callable[[Callable[Concatenate[Cls, P], R]], ApiMethodInterface[Cls, R, P]]:
+    ) -> Callable[[Callable[Concatenate[Cls, P], R]], ApiMethod[Cls, R, P]]:
         """Add an API method to request to the server. The name of this decorator
         indicates the appropriate HTTP request method, i.e., GET, POST, etc.
 
@@ -71,7 +71,7 @@ def _make_api_method_decorator(http_verb: HttpVerbs):
         """
 
         def wraps(method: Callable[Concatenate[Cls, P], R]):
-            return ApiMethodInterface(
+            return ApiMethod(
                 method=method,
                 properties=ApiMethodProperties(
                     http_verb=http_verb,
@@ -105,8 +105,8 @@ def error_handler[
     *api_methods: str,
     error_codes: int | Iterable[int] | None = None,
 ) -> (
-    ErrorHandlerInterface[Cls, R, P]
-    | Callable[[Callable[Concatenate[Cls, P], R]], ErrorHandlerInterface[Cls, R, P]]
+    ErrorHandler[Cls, R, P]
+    | Callable[[Callable[Concatenate[Cls, P], R]], ErrorHandler[Cls, R, P]]
 ):
     """Mark a method as an error handler for API methods that raise errors.
 
@@ -117,7 +117,7 @@ def error_handler[
     """
 
     def wraps(method: Callable[Concatenate[Cls, P], R]):
-        return ErrorHandlerInterface(
+        return ErrorHandler(
             error_handler=method, api_methods=api_methods, error_codes=error_codes
         )
 
@@ -134,8 +134,8 @@ def paginator[
     /,
     *api_methods: str,
 ) -> (
-    PaginatorInterface[Cls, R, P]
-    | Callable[[Callable[Concatenate[Cls, P], R]], PaginatorInterface[Cls, R, P]]
+    Paginator[Cls, R, P]
+    | Callable[[Callable[Concatenate[Cls, P], R]], Paginator[Cls, R, P]]
 ):
     """Mark a method as a paginator for API methods that return data page by page.
 
@@ -144,7 +144,7 @@ def paginator[
     """
 
     def wraps(method: Callable[Concatenate[Cls, P], R]):
-        return PaginatorInterface(paginator=method, api_methods=api_methods)
+        return Paginator(paginator=method, api_methods=api_methods)
 
     if method is None:
         return wraps

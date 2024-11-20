@@ -18,6 +18,6 @@ class ApiMethodProperties:
 
 
 @dataclass(slots=True, frozen=True, eq=False, match_args=False, kw_only=True)
-class ApiMethodInterface[Cls: object, R, **P]:
+class ApiMethod[Cls: object, R, **P]:
     method: Callable[Concatenate[Cls, P], R]
     properties: ApiMethodProperties
